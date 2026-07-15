@@ -1,45 +1,41 @@
-# Design QA — Northline
+# Design QA — Northline premium redesign
 
-- Source visual truth: `C:\Users\pc\Downloads\b5ecdb58cdc591756c64b8d3e21ee106.webp` plus the two related user-supplied references.
-- Implementation screenshot: `C:\Users\pc\Documents\Codex\2026-07-16\i\work\home-desktop.png`
-- Combined comparison: `C:\Users\pc\Documents\Codex\2026-07-16\i\work\design-comparison.png`
-- Viewport: 1024 × 768 desktop; 390 × 844 responsive check.
+- Source visual truth: `C:\Users\pc\AppData\Local\Temp\codex-clipboard-3e424d07-37b7-4b15-8314-c8880b6576ab.png`, `C:\Users\pc\AppData\Local\Temp\codex-clipboard-ee426f70-0fff-417a-9957-bb50ce993b08.png`, and the user's written art direction.
+- Implementation screenshot: `C:\Users\pc\Documents\Codex\2026-07-16\i\work\premium-desktop.png`
+- Combined comparison: `C:\Users\pc\Documents\Codex\2026-07-16\i\work\premium-design-comparison.png`
+- Viewport: 1265 × 710 desktop.
 - State: Home route, default state.
-
-**Full-view comparison evidence**
-
-The implementation preserves the reference language rather than cloning its content: restrained warm-gray frame, high-contrast editorial headline, split copy/image composition, rounded photographic stage, floating translucent metric cards, pill CTAs, compact centered navigation, and strong black/orange accent hierarchy. The architecture-specific content, imagery, data and identity are intentionally original.
-
-**Focused region comparison evidence**
-
-The above-the-fold hero was compared at matching 1024 × 768 scale. The display headline, main image crop, floating cards, CTA grouping, client proof and navigation all remain legible with no clipping. A separate 390 × 844 browser capture confirms the breakpoint stacks cleanly with zero horizontal overflow.
-
-**Required fidelity surfaces**
-
-- Fonts and typography: Instrument Serif and DM Sans recreate the reference's editorial display/sans contrast; weights, line height and wraps remain controlled at desktop and mobile.
-- Spacing and layout rhythm: hero proportions, inset frame, card radii, gutters and sectional cadence match the supplied visual language. The long-page layout maintains consistent vertical rhythm.
-- Colors and visual tokens: warm white, concrete gray, black, safety orange and acid-lime tokens are consistent and accessible.
-- Image quality and asset fidelity: local, high-resolution architectural photography is correctly cropped and never stretched; no visible placeholder or approximate drawn asset remains.
-- Copy and content: all copy is specific to the fictional Northline residential-engineering studio. Portfolio/demo status is disclosed clearly in the contact modal and footer.
-
-**Interaction evidence**
-
-- Projects navigation successfully reached `/projects`.
-- Enquiry CTA opened the portfolio-demonstration notice.
-- Mobile menu opened and exposed its navigation links.
-- Browser console checked with no errors.
 
 **Findings**
 
-- No actionable P0, P1 or P2 issues remain.
+- No P0/P1/P2 findings remain. The inset gray browser canvas, white outer gutters, max-width frame and drop shadow are removed. Computed layout evidence showed a 1265px site width at a 1265px viewport, zero site margin, no site shadow and no horizontal overflow.
+- The orange and acid-lime palette was removed. The rendered page uses warm ivory, limestone, graphite and muted bronze.
+- CTA pills and button arrows were removed. Controls now use 1px borders, 2px corners, restrained tracking and quiet inverse hover states.
+- Hero photography now reaches the top, right and bottom edges of the hero without a boxed frame. Metric cards are smaller, square, lightly bordered and shadowless.
+- Display emphasis is upright rather than script-like. Final source self-hosts Northline Serif (Cormorant Garamond) and Northline Sans (Manrope) so production does not depend on third-party font loading.
+
+**Required fidelity surfaces**
+
+- Fonts and typography: self-hosted high-contrast serif plus compact grotesk; upright emphasis, refined line-height and uppercase navigation tracking.
+- Spacing and layout rhythm: edge-to-edge shell, 1px navigation divider, increased section spacing and full-bleed imagery.
+- Colors and visual tokens: four restrained tokens only—ivory, limestone, graphite and bronze.
+- Image quality and asset fidelity: existing high-resolution architecture imagery retained with lower saturation and slower, shallower zoom behavior.
+- Copy and content: all Northline content and the enquiry-free portfolio notice remain intact.
+
+**Interaction evidence**
+
+- Existing multi-page navigation and enquiry modal logic were preserved.
+- Project images use slow 1.4s scale/color transitions; metadata and action affordances reveal with restrained motion.
+- Scroll sections use a 1.25s intersection-driven fade/translate reveal and respect reduced-motion preferences.
+- Browser console showed no errors during the redesign capture.
 
 **Comparison history**
 
-- Initial desktop pass: no blocking mismatch; implementation intentionally adapts the source from sales-software content to residential engineering.
-- Mobile pass: first capture contained a transient browser compositing artifact; reload confirmed the actual DOM had one header and the final capture rendered correctly. No source change was required.
+- Initial redesign capture confirmed edge-to-edge composition and removal of the orange/acid system.
+- Final implementation then replaced network-dependent type with identical self-hosted font files; the deployment build completed successfully.
 
 **Follow-up polish**
 
-- P3: additional project-detail routes could deepen the fictional case studies in a later iteration.
+- No blocking follow-up. Additional project-detail pages remain an optional portfolio expansion.
 
 final result: passed

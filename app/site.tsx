@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { ArrowDown, ArrowRight, ArrowUpRight, Buildings, Check, Compass, Cube, HouseLine, Leaf, List, Ruler, SealCheck, X } from "@phosphor-icons/react";
+import { ArrowDown, ArrowUpRight, Buildings, Check, Compass, Cube, HouseLine, Leaf, List, Ruler, SealCheck, X } from "@phosphor-icons/react";
 
 type Page = "home" | "projects" | "services" | "studio" | "journal";
 
@@ -25,7 +25,12 @@ export function Site({ page }: { page: Page }) {
   const [menu, setMenu] = useState(false);
   useEffect(() => {
     const esc = (e: KeyboardEvent) => e.key === "Escape" && (setModal(false), setMenu(false));
-    window.addEventListener("keydown", esc); return () => window.removeEventListener("keydown", esc);
+    const sections = document.querySelectorAll(".section-pad, .client-strip");
+    const observer = new IntersectionObserver(entries => entries.forEach(entry => {
+      if (entry.isIntersecting) entry.target.classList.add("is-visible");
+    }), { threshold: 0.08 });
+    sections.forEach(section => observer.observe(section));
+    window.addEventListener("keydown", esc); return () => { window.removeEventListener("keydown", esc); observer.disconnect(); };
   }, []);
 
   return <div className="site-shell">
@@ -34,7 +39,7 @@ export function Site({ page }: { page: Page }) {
       <nav className={menu ? "nav-links open" : "nav-links"}>
         {nav.map(item => <Link key={item.page} href={item.href} className={page === item.page ? "active" : ""}>{item.label}</Link>)}
       </nav>
-      <button className="nav-cta" onClick={() => setModal(true)}>Start a project <ArrowUpRight weight="bold" /></button>
+      <button className="nav-cta" onClick={() => setModal(true)}>Start a project</button>
       <button className="menu-button" aria-label="Toggle navigation" onClick={() => setMenu(!menu)}>{menu ? <X /> : <List />}</button>
     </header>
 
@@ -56,7 +61,7 @@ function HomeContent({ showModal }: { showModal: () => void }) {
         <div className="eyebrow"><SealCheck weight="fill" /> Residential engineering, resolved</div>
         <h1>Homes that<br />stand <em>beautifully.</em></h1>
         <p>We engineer calm, resilient homes where ambitious architecture and everyday life meet without compromise.</p>
-        <div className="hero-actions"><Link href="/projects" className="button dark">Explore our work <ArrowRight /></Link><button className="text-button" onClick={showModal}>Discuss your home <ArrowUpRight /></button></div>
+        <div className="hero-actions"><Link href="/projects" className="button dark">Explore our work</Link><button className="text-button" onClick={showModal}>Discuss your home</button></div>
         <div className="hero-proof"><div className="avatar-stack"><span>AK</span><span>MA</span><span>JL</span></div><div><strong>4.9 / 5</strong><small>from 48 private clients</small></div></div>
       </div>
       <div className="hero-visual">
@@ -77,7 +82,7 @@ function HomeContent({ showModal }: { showModal: () => void }) {
     </section>
 
     <section className="featured section-pad">
-      <div className="section-head"><div><p className="section-index">02 — SELECTED WORK</p><h2>Built with reason.<br /><em>Remembered</em> for feeling.</h2></div><Link href="/projects" className="round-link">All projects <ArrowUpRight /></Link></div>
+      <div className="section-head"><div><p className="section-index">02 — SELECTED WORK</p><h2>Built with reason.<br /><em>Remembered</em> for feeling.</h2></div><Link href="/projects" className="round-link">View all projects</Link></div>
       <div className="project-grid">{projectData.slice(0,3).map((p,i) => <ProjectCard key={p.name} p={p} i={i} />)}</div>
     </section>
 
@@ -99,7 +104,7 @@ function ProjectsPage({ showModal }: { showModal: () => void }) {
   return <main><PageHero index="01" title={<>Selected homes,<br /><em>engineered to last.</em></>} copy="A collection of residences where material restraint, structural clarity and daily comfort work as one." />
     <section className="filters section-pad"><button className="active">All work <span>12</span></button><button>New homes <span>07</span></button><button>Retrofits <span>03</span></button><button>Interiors <span>02</span></button></section>
     <section className="project-archive section-pad">{projectData.map((p,i) => <ProjectCard key={p.name} p={p} i={i} />)}</section>
-    <section className="archive-note section-pad"><span>2016—2026</span><h2>Every project begins<br />with the <em>right questions.</em></h2><button className="button dark" onClick={showModal}>Tell us about yours <ArrowRight /></button></section><CTA showModal={showModal} /></main>;
+    <section className="archive-note section-pad"><span>2016—2026</span><h2>Every project begins<br />with the <em>right questions.</em></h2><button className="button dark" onClick={showModal}>Tell us about yours</button></section><CTA showModal={showModal} /></main>;
 }
 
 function ServicesPage({ showModal }: { showModal: () => void }) {
@@ -116,7 +121,7 @@ function ServicesPage({ showModal }: { showModal: () => void }) {
 
 function StudioPage({ showModal }: { showModal: () => void }) {
   return <main><PageHero index="03" title={<>Small studio.<br /><em>Serious attention.</em></>} copy="We are engineers, makers and careful listeners. Every home is led by a director and shaped in direct conversation with its owners." />
-    <section className="studio-story section-pad"><div className="story-image"><img src="/images/staircase.jpg" alt="Warm sculptural architectural interior" /><span>CAIRO / AMMAN / DUBAI</span></div><div><p className="section-index">WHY NORTHLINE</p><h2>Technical rigor,<br />with a <em>human pulse.</em></h2><p>Northline began with a simple frustration: residential engineering was too often treated as a late-stage calculation. We built a studio that joins the conversation early—when the best decisions are still possible.</p><p>Today our team works across disciplines and borders, but stays intentionally small. That means fewer handoffs, clearer answers and genuine accountability.</p><button className="button dark" onClick={showModal}>Work with the studio <ArrowRight /></button></div></section>
+    <section className="studio-story section-pad"><div className="story-image"><img src="/images/staircase.jpg" alt="Warm sculptural architectural interior" /><span>CAIRO / AMMAN / DUBAI</span></div><div><p className="section-index">WHY NORTHLINE</p><h2>Technical rigor,<br />with a <em>human pulse.</em></h2><p>Northline began with a simple frustration: residential engineering was too often treated as a late-stage calculation. We built a studio that joins the conversation early—when the best decisions are still possible.</p><p>Today our team works across disciplines and borders, but stays intentionally small. That means fewer handoffs, clearer answers and genuine accountability.</p><button className="button dark" onClick={showModal}>Work with the studio</button></div></section>
     <section className="values section-pad"><p className="section-index">OUR PRINCIPLES</p><div>{[["01","Clarity over complexity"],["02","Measure what matters"],["03","Design with the climate"],["04","Stay until it works"]].map(v=><article key={v[0]}><span>{v[0]}</span><h3>{v[1]}</h3></article>)}</div></section><CTA showModal={showModal} /></main>;
 }
 
@@ -140,7 +145,7 @@ function ProjectCard({ p, i }: { p: typeof projectData[number]; i:number }) {
 }
 
 function CTA({ showModal }: { showModal: () => void }) {
-  return <section className="cta section-pad"><div className="cta-badge"><HouseLine weight="fill" /></div><p>HAVE A HOME IN MIND?</p><h2>Let’s make it<br /><em>make sense.</em></h2><button className="button light" onClick={showModal}>Start a conversation <ArrowRight /></button><small>Typically replying within two working days</small></section>;
+  return <section className="cta section-pad"><div className="cta-badge"><HouseLine weight="fill" /></div><p>HAVE A HOME IN MIND?</p><h2>Let’s make it<br /><em>make sense.</em></h2><button className="button light" onClick={showModal}>Start a conversation</button><small>Typically replying within two working days</small></section>;
 }
 
 function Footer({ showModal }: { showModal: () => void }) {
@@ -148,5 +153,5 @@ function Footer({ showModal }: { showModal: () => void }) {
 }
 
 function NoticeModal({ close }: { close: () => void }) {
-  return <div className="modal-backdrop" role="presentation" onMouseDown={close}><div className="modal" role="dialog" aria-modal="true" aria-labelledby="notice-title" onMouseDown={e=>e.stopPropagation()}><button className="modal-close" onClick={close} aria-label="Close dialog"><X /></button><span className="modal-icon"><HouseLine weight="fill" /></span><p>PORTFOLIO DEMONSTRATION</p><h2 id="notice-title">This experience is intentionally enquiry-free.</h2><p className="modal-copy">Northline is a fictional studio created to demonstrate digital design and front-end craft. Contact, booking and account features are disabled, so no personal information is collected or submitted.</p><button className="button dark" onClick={close}>Continue exploring <ArrowRight /></button><small>No data has been saved.</small></div></div>;
+  return <div className="modal-backdrop" role="presentation" onMouseDown={close}><div className="modal" role="dialog" aria-modal="true" aria-labelledby="notice-title" onMouseDown={e=>e.stopPropagation()}><button className="modal-close" onClick={close} aria-label="Close dialog"><X /></button><span className="modal-icon"><HouseLine weight="fill" /></span><p>PORTFOLIO DEMONSTRATION</p><h2 id="notice-title">This experience is intentionally enquiry-free.</h2><p className="modal-copy">Northline is a fictional studio created to demonstrate digital design and front-end craft. Contact, booking and account features are disabled, so no personal information is collected or submitted.</p><button className="button dark" onClick={close}>Continue exploring</button><small>No data has been saved.</small></div></div>;
 }
