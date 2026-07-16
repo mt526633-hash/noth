@@ -29,6 +29,7 @@
 - Navigation routes render with the correct active tab and route-specific theme class.
 - Cross-route navigation was reverified after removing the expensive cross-document transition. The premium entrance sequence runs on the initial page only. Clicking any internal route activates `motion-static`, makes every reveal target immediately visible, pauses all remaining keyframe animation and uses client-side navigation with no white intermediate frame.
 - The header now lives in the persistent root layout, so it does not unmount or redraw between tabs. Services → Projects → Studio was checked with one header instance, the correct active link, zero hidden motion targets and no console errors.
+- The active navigation underline is one shared measured indicator rather than one pseudo-element per link. Studio → Journal was sampled before, during and after travel: transform X moved continuously from `144.344px` through `204.806px` to `215px`, while width interpolated from `31.75px` to `37px`. The 720ms spring-like transition remained inside the persistent header and produced no page animation or console error.
 - Services entrance and scroll-triggered content reveals were checked in the in-app browser.
 - Browser console errors: none.
 - `npm test`: passed, including production build and all route-render tests.
