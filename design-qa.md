@@ -12,6 +12,6 @@
 - P2 — fidelity: none. The implementation carries the requested white foundation, cyan/blue ambient glow, glass navigation, gradient CTA, soft elevated cards, restrained photography and dense premium spacing.
 - P3 — polish: production screenshot generation can lag behind the deployed version; local production-equivalent capture confirms the new visual state.
 
-Photography remains static on hover. Every major section, heading, paragraph, card, control group, metric, list and footer element now participates in a staggered appearance sequence. Motion variants include masked headings, softened copy, scaled surfaces, horizontal accordion reveals, chart construction and cascading card content, with reduced-motion support.
+Photography remains static on hover. Every major section, heading, paragraph, card, control group, metric, list and footer element now participates in a long staggered appearance sequence. A double-frame initialization guarantees the hidden state is painted before each reveal begins. Motion variants include 1.3–2.1 second header and hero choreography, masked headings, softened copy, 3D card rises, horizontal accordion reveals, chart construction and cascading card content, with reduced-motion support.
 
 final result: passed
