@@ -31,6 +31,7 @@
 - The header now lives in the persistent root layout, so it does not unmount or redraw between tabs. Services → Projects → Studio was checked with one header instance, the correct active link, zero hidden motion targets and no console errors.
 - The active navigation underline is one shared measured indicator rather than one pseudo-element per link. Studio → Journal was sampled before, during and after travel: transform X moved continuously from `144.344px` through `204.806px` to `215px`, while width interpolated from `31.75px` to `37px`. The 720ms spring-like transition remained inside the persistent header and produced no page animation or console error.
 - Route color and glow now interpolate on the same 720ms curve as position and width. Journal → Studio was sampled as teal `rgb(36, 205, 180)`, intermediate blue-violet `rgb(135, 121, 247)`, and final Studio purple `rgb(147, 111, 255)`; both shadow colors and glow radius transitioned continuously with no abrupt token swap.
+- Resting indicator width is now fixed at `34px` for every route and centered below each label. Studio → Projects measured `34px` before, during and after travel at the outer rail; only the inner light streak elastically reached `2.14481×` during motion before returning to an unscaled `34px` resting state.
 - Services entrance and scroll-triggered content reveals were checked in the in-app browser.
 - Browser console errors: none.
 - `npm test`: passed, including production build and all route-render tests.
