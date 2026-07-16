@@ -31,6 +31,7 @@
 - The header now lives in the persistent root layout, so it does not unmount or redraw between tabs. Services → Projects → Studio was checked with one header instance, the correct active link, zero hidden motion targets and no console errors.
 - The active navigation state is one persistent `72px × 34px` translucent capsule centered behind every label. It now updates its target position synchronously on click rather than waiting for route completion: Studio → Journal was already at transform X `158.325px` after 110ms and settled at `197.5px`, while width and height remained fixed. The blur compositor and bottom line are removed. Each inactive link has a matching low-opacity hover capsule, and `.current` suppresses that hover layer with no transition so it cannot trail behind the active shape. No console errors were observed.
 - Services entrance and scroll-triggered content reveals were checked in the in-app browser.
+- Navigation overlap check: the selected capsule remains `72px x 34px`; every inactive-tab hover capsule is consistently `52px x 26px` with a `10px` radius. Adjacent selected/hover states retain `5.3px` to `13px` of clear space, so neighboring shapes never overlap.
 - Browser console errors: none.
 - `npm test`: passed, including production build and all route-render tests.
 
