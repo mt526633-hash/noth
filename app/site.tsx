@@ -42,13 +42,14 @@ export function Site({page}:{page:Page}){
     if(page!=="projects")return;
     const root=document.querySelector<HTMLElement>(".page-projects");
     if(!root)return;
-    const nodes=Array.from(root.querySelectorAll<HTMLElement>(".archive-head,.filter-row button,.project-tile,.callout-project-image,.callout-project-copy>.eyebrow,.callout-project-copy>h2,.callout-project-copy>p,.callout-project-copy>.button,.footer>.logo,.footer>div"));
+    const nodes=Array.from(root.querySelectorAll<HTMLElement>(".archive-head>span,.archive-head>p,.filter-row button,.project-tile .project-image,.project-tile .project-info,.callout-project-image,.callout-project-copy>.eyebrow,.callout-project-copy>h2,.callout-project-copy>p,.callout-project-copy>.button,.footer>.logo,.footer>div"));
     const variants=["rise","left","scale","right"];
     let tileIndex=0,filterIndex=0,footerIndex=0;
     nodes.forEach(node=>{
       let variant="rise",delay=0;
       if(node.matches(".filter-row button")){variant="lift";delay=filterIndex++*75}
-      else if(node.matches(".project-tile")){variant=variants[tileIndex%variants.length];delay=(tileIndex++%3)*95}
+      else if(node.matches(".project-image")){variant=variants[(tileIndex+2)%variants.length];delay=(tileIndex%3)*85}
+      else if(node.matches(".project-info")){variant=tileIndex%2?"right":"rise";delay=165+(tileIndex++%3)*85}
       else if(node.matches(".callout-project-image"))variant="scale";
       else if(node.matches(".callout-project-copy>.eyebrow"))variant="left";
       else if(node.matches(".callout-project-copy>h2")){variant="rise";delay=90}
@@ -59,10 +60,9 @@ export function Site({page}:{page:Page}){
       node.style.setProperty("--project-reveal-delay",`${delay}ms`);
     });
     root.classList.add("project-scroll-ready");
-    if(window.matchMedia("(prefers-reduced-motion: reduce)").matches){nodes.forEach(node=>node.classList.add("project-visible"));return()=>root.classList.remove("project-scroll-ready")}
     const observer=new IntersectionObserver(entries=>entries.forEach(entry=>{if(entry.isIntersecting&&entry.intersectionRatio>=.12){entry.target.classList.add("project-visible");observer.unobserve(entry.target)}}),{threshold:[0,.12,.3,.6],rootMargin:"0px 0px -10% 0px"});
-    const frame=requestAnimationFrame(()=>nodes.forEach(node=>observer.observe(node)));
-    return()=>{cancelAnimationFrame(frame);observer.disconnect();root.classList.remove("project-scroll-ready");nodes.forEach(node=>{node.classList.remove("project-scroll-reveal","project-reveal-rise","project-reveal-left","project-reveal-right","project-reveal-scale","project-reveal-lift","project-visible");node.style.removeProperty("--project-reveal-delay")})}
+    root.getBoundingClientRect();const armTimer=window.setTimeout(()=>{root.classList.add("project-scroll-armed");nodes.forEach(node=>observer.observe(node))},45);
+    return()=>{clearTimeout(armTimer);observer.disconnect();root.classList.remove("project-scroll-ready","project-scroll-armed");nodes.forEach(node=>{node.classList.remove("project-scroll-reveal","project-reveal-rise","project-reveal-left","project-reveal-right","project-reveal-scale","project-reveal-lift","project-visible");node.style.removeProperty("--project-reveal-delay")})}
   },[page]);
   return <div className={`site page-${page}`}>
   {page==="home"&&<Home openNotice={()=>setNotice(true)}/>} {page==="projects"&&<Projects openNotice={()=>setNotice(true)}/>} {page==="services"&&<Services openNotice={()=>setNotice(true)}/>} {page==="studio"&&<Studio openNotice={()=>setNotice(true)}/>} {page==="journal"&&<Journal openNotice={()=>setNotice(true)}/>}<Footer openNotice={()=>setNotice(true)}/>{notice&&<Notice close={()=>setNotice(false)}/>}</div>
