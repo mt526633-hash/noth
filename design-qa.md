@@ -56,5 +56,6 @@
 - Projects now adds archive metrics and an animated completion rail; Services adds three discipline modules; Studio adds an editorial practice note. Each system begins at `x=63`, `y=520`, remains separate from the right-hand copy at `x=852`, and creates no horizontal overflow.
 - Home and Journal intentionally received no supporting hero modules, matching the requested first/last exclusions.
 - Projects hero interaction upgrade: removed the small right-side description and replaced the simple four-bar strip with five selectable engineering systems, two project metrics, a live-status indicator, four feature labels and two working actions. Selecting Climate updates the adjacent readout to `24.1°C / Passive model stable`; the project-brief action opens and closes the portfolio notice successfully. The 1280 x 720 browser check reports five bars, four feature items, no horizontal overflow and no console errors.
+- Projects premium context layer: added a synchronized archive utility rail at y=122, a 102px verified-scope seal at the unused right edge, and a four-stage delivery timeline at y=432. The controls remain clear of the headline and console; selecting `04 Issue` drives the readout to `96% / Tender-ready package`. No horizontal overflow or console errors were observed.
 
 final result: passed
