@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useState } from "react";
 import { ArrowRight, Buildings, Calculator, CaretDown, Check, CirclesThree, Cube, Gauge, House, Leaf, List, Ruler, ShieldCheck, Sparkle, X } from "@phosphor-icons/react";
 
 type Page = "home" | "projects" | "services" | "studio" | "journal";
@@ -21,6 +21,14 @@ const services=[
 
 export function Site({page}:{page:Page}){
   const [menu,setMenu]=useState(false),[notice,setNotice]=useState(false);
+  useLayoutEffect(()=>{
+    if(sessionStorage.getItem("northline-route-change")!=="1")return;
+    sessionStorage.removeItem("northline-route-change");
+    document.documentElement.classList.add("route-arrival");
+    const timer=window.setTimeout(()=>document.documentElement.classList.remove("route-arrival"),1200);
+    return()=>window.clearTimeout(timer)
+  },[page]);
+  const prepareRoute=()=>{sessionStorage.setItem("northline-route-change","1");setMenu(false)};
   useEffect(()=>{
     document.documentElement.classList.add("motion-force","motion-loading");
     const selector=["[data-reveal]",".hero-console > *",".client-strip > *",".intro > *",".intro h2",".intro-copy > *",".section-heading > *",".service-tabs > *",".service-panel-copy > *",".metric-stage > *",".metric-card > *",".featured-caption > *",".project-mini-grid > *",".project-info > *",".numbers > *",".numbers > div > *",".estimator > *",".estimator-card > *",".estimator-card label",".estimate-result > *",".process-grid > *",".process-grid article > *",".faq > *",".faq-list > *",".faq-list button > *",".subhero > *",".archive-grid > *",".services-page > *",".services-page article > *",".studio-story > *",".studio-story article > *",".values > *",".values article > *",".journal > *",".journal article > *",".callout > *",".footer > *",".footer-bottom > *"].join(",");
@@ -33,7 +41,7 @@ export function Site({page}:{page:Page}){
     const close=(e:KeyboardEvent)=>e.key==="Escape"&&(setMenu(false),setNotice(false));window.addEventListener("keydown",close);
     return()=>{cancelAnimationFrame(firstFrame);cancelAnimationFrame(secondFrame);clearTimeout(revealTimer);document.documentElement.classList.remove("motion-loading");observer.disconnect();window.removeEventListener("keydown",close)}
   },[page]);
-  return <div className={`site page-${page}`}><header className="topbar"><Link className="logo" href="/"><span className="logo-mark"><House weight="fill"/></span><span>Northline<small>House engineering</small></span></Link><nav className={menu?"nav open":"nav"}>{navigation.map(item=><Link key={item.page} className={page===item.page?"current":""} href={item.href} onClick={()=>setMenu(false)}>{item.label}</Link>)}</nav><button className="button button-dark nav-button" onClick={()=>setNotice(true)}><span>Start a project</span><ArrowRight/></button><button className="menu" onClick={()=>setMenu(!menu)} aria-label="Toggle navigation">{menu?<X/>:<List/>}</button></header>
+  return <div className={`site page-${page}`}><header className="topbar"><a className="logo" href="/" onClick={prepareRoute}><span className="logo-mark"><House weight="fill"/></span><span>Northline<small>House engineering</small></span></a><nav className={menu?"nav open":"nav"}>{navigation.map(item=><a key={item.page} className={page===item.page?"current":""} href={item.href} onClick={prepareRoute}>{item.label}</a>)}</nav><button className="button button-dark nav-button" onClick={()=>setNotice(true)}><span>Start a project</span><ArrowRight/></button><button className="menu" onClick={()=>setMenu(!menu)} aria-label="Toggle navigation">{menu?<X/>:<List/>}</button></header>
   {page==="home"&&<Home openNotice={()=>setNotice(true)}/>} {page==="projects"&&<Projects openNotice={()=>setNotice(true)}/>} {page==="services"&&<Services openNotice={()=>setNotice(true)}/>} {page==="studio"&&<Studio openNotice={()=>setNotice(true)}/>} {page==="journal"&&<Journal/>}<Footer openNotice={()=>setNotice(true)}/>{notice&&<Notice close={()=>setNotice(false)}/>}</div>
 }
 
@@ -58,5 +66,5 @@ function Journal(){return <main><SubHero tag="Field notes" title={<>Ideas for ho
 function SubHero({tag,title,copy}:{tag:string;title:React.ReactNode;copy:string}){return <section className="subhero"><div className="ambient ambient-one"/><div className="eyebrow">{tag}</div><h1>{title}</h1><p>{copy}</p></section>}
 function ProjectTile({project,index}:{project:Project;index:number}){return <article className="project-tile" data-reveal><div className="project-image"><img src={project.image} alt={`${project.name}, ${project.place}`}/><span>0{index}</span></div><div className="project-info"><div><h3>{project.name}</h3><p>{project.place} · {project.year}</p></div><small>{project.scope}</small></div></article>}
 function Callout({openNotice}:{openNotice:()=>void}){return <section className="callout section"><div className="callout-glow"/><div className="eyebrow">Have a house in mind?</div><h2>Let’s make the difficult<br/>parts feel simple.</h2><button className="button button-glow" onClick={openNotice}><span>Start a conversation</span><ArrowRight/></button><small>Typical response within two working days</small></section>}
-function Footer({openNotice}:{openNotice:()=>void}){return <footer className="footer"><Link className="logo" href="/"><span className="logo-mark"><House weight="fill"/></span><span>Northline<small>House engineering</small></span></Link><div>{navigation.map(item=><Link key={item.href} href={item.href}>{item.label}</Link>)}</div><div><span>New Cairo · Egypt</span><button onClick={openNotice}>hello@northline.engineering</button></div><div className="footer-bottom"><span>© 2026 Northline Studio</span><span>Portfolio concept · No client data collected</span><button onClick={openNotice}>Privacy</button></div></footer>}
+function Footer({openNotice}:{openNotice:()=>void}){return <footer className="footer"><a className="logo" href="/"><span className="logo-mark"><House weight="fill"/></span><span>Northline<small>House engineering</small></span></a><div>{navigation.map(item=><a key={item.href} href={item.href}>{item.label}</a>)}</div><div><span>New Cairo · Egypt</span><button onClick={openNotice}>hello@northline.engineering</button></div><div className="footer-bottom"><span>© 2026 Northline Studio</span><span>Portfolio concept · No client data collected</span><button onClick={openNotice}>Privacy</button></div></footer>}
 function Notice({close}:{close:()=>void}){return <div className="modal-backdrop" onMouseDown={e=>e.target===e.currentTarget&&close()}><div className="modal" role="dialog" aria-modal="true"><button className="modal-close" onClick={close} aria-label="Close"><X/></button><div className="modal-symbol"><Buildings weight="fill"/></div><div className="eyebrow">Portfolio demonstration</div><h2>This enquiry is intentionally offline.</h2><p>Northline is a fictional studio created as a portfolio concept. To respect your privacy, this demonstration does not collect, store or transmit contact details.</p><button className="button button-dark" onClick={close}><span>Return to the experience</span><ArrowRight/></button></div></div>}
