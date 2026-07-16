@@ -55,5 +55,6 @@
 - Shared headline anchor: Projects, Services, Studio and Journal now resolve to the same `x=63`, `y=254`, `width=1139` headline geometry at the 1280 x 720 review viewport. Route switching therefore preserves the large-type position while each atmosphere remains distinct.
 - Projects now adds archive metrics and an animated completion rail; Services adds three discipline modules; Studio adds an editorial practice note. Each system begins at `x=63`, `y=520`, remains separate from the right-hand copy at `x=852`, and creates no horizontal overflow.
 - Home and Journal intentionally received no supporting hero modules, matching the requested first/last exclusions.
+- Projects hero interaction upgrade: removed the small right-side description and replaced the simple four-bar strip with five selectable engineering systems, two project metrics, a live-status indicator, four feature labels and two working actions. Selecting Climate updates the adjacent readout to `24.1°C / Passive model stable`; the project-brief action opens and closes the portfolio notice successfully. The 1280 x 720 browser check reports five bars, four feature items, no horizontal overflow and no console errors.
 
 final result: passed
