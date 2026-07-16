@@ -1,19 +1,39 @@
-# Northline design QA
+# Northline route-theme design QA
 
 ## Evidence
 
-- Reference set: `cc4a52f3fc5df6e55f429a8d8ceeefc9.jpg`, `aba6a5eb45ce6507e58a13f7902383d2.jpg`, and `Modern Tennis Landing Page.jpg`.
-- Implementation capture: `work/local-light.png` at 1440 × 1000.
+- Source visual truth: `work/midnight-redesign.png` (approved midnight homepage art direction) and `C:/Users/pc/AppData/Local/Temp/codex-clipboard-3e30b78e-b67a-45a3-baf6-9697a6be946c.png` (Services route that the user identified as inconsistent).
+- Implementation captures: `work/services-midnight-settled.png` and `work/services-midnight-content-final.png`.
+- Combined full-view comparison: `work/route-theme-comparison.png`.
+- Review viewport: 1265 × 710 for the live Services route; the homepage reference is normalized beside it in the combined comparison.
+- State: Services route loaded with the entrance sequence settled; lower content checked after one Page Down.
 
-## Review
+## Findings
 
 - P0 — blockers: none.
-- P1 — layout/function: none. The page uses the full browser canvas with no outer presentation frame; navigation, routes, tabs, filters, estimator, accordion and modal are operational.
-- P2 — fidelity: none. The implementation carries the requested white foundation, cyan/blue ambient glow, glass navigation, gradient CTA, soft elevated cards, restrained photography and dense premium spacing.
-- P3 — polish: production screenshot generation can lag behind the deployed version; local production-equivalent capture confirms the new visual state.
+- P1 — visual-system continuity: resolved. The former pale Services canvas has been replaced by the same midnight navy architectural foundation, luminous grid, glass navigation and high-contrast typography used by the homepage.
+- P2 — route differentiation: resolved. Projects uses cyan/blue light, Services uses sapphire/indigo, Studio uses violet/blue and Journal uses teal/blue. The base values, grid density, typography, surface depth and footer treatment stay shared.
+- P2 — below-fold continuity: resolved. Services rows, icons, dividers, callout and footer now remain inside the dark system instead of switching back to white.
+- P3 — polish: the subpage glows are intentionally quieter than the homepage hero so active-route color does not compete with project content.
 
-Photography remains static on hover. Every major section, heading, paragraph, card, control group, metric, list and footer element participates in a staggered appearance sequence. A server-rendered hidden state plus double-frame initialization guarantees that disappearance is painted before each reveal begins. Viewport-ratio gates prevent below-fold motion from firing early without leaving empty regions: hero cards require 45% visibility, large surfaces 28%, and text or controls 16%. Text clipping is completely disabled. Linear-inspired motion uses shorter travel, 1–4px blur, restrained scale and a smooth `cubic-bezier(.16,1,.3,1)` easing. Distinct variants remain for headings, copy, buttons, tabs, stats, projects, process cards, accordions, charts and card content. Motion is explicitly forced for this portfolio demo, matching the user's request even when the operating system asks sites to reduce animation.
+## Required fidelity surfaces
 
-The high-contrast background redesign has been visually reverified at 1440 × 1000 in `work/midnight-redesign.png`. The hero is now an unmistakably different midnight architectural environment with sapphire/cyan volumetric light, white display type and deep glass engineering surfaces. Warm pearl editorial sections and a second dark technical systems section create deliberate tonal contrast across the long page without introducing an outer frame or reducing text contrast.
+- Fonts and typography: Manrope/Cormorant pairing, optical weights, line height, display wrapping and gradient emphasis remain consistent with the approved homepage.
+- Spacing and layout rhythm: the existing subpage composition and navigation spacing are preserved; no new outer frame, thick border or cropped text was introduced.
+- Colors and visual tokens: a shared midnight base is driven by route-scoped accent tokens, producing related but visibly distinct atmospheres.
+- Image quality and asset fidelity: supplied residential photography is unchanged, retains its existing crop and receives no photo-hover transformation.
+- Copy and content: all route labels, descriptions and navigation text remain unchanged.
+
+## Interaction and runtime checks
+
+- Navigation routes render with the correct active tab and route-specific theme class.
+- Services entrance and scroll-triggered content reveals were checked in the in-app browser.
+- Browser console errors: none.
+- `npm test`: passed, including production build and all route-render tests.
+
+## Comparison history
+
+- Earlier P1: Services and the other tabs used the old pale pearl background and visibly diverged from the newly approved homepage. Fixed with a shared dark route shell and route-level accent variables.
+- Earlier P2: lower sections still returned to white. Fixed by applying the midnight surface system to archive, service, studio, values, journal and footer regions. Post-fix evidence is in `work/services-midnight-content-final.png`.
 
 final result: passed
