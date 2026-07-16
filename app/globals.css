@@ -54,20 +54,9 @@ body{position:relative;background:#f3f6fb}body:before{content:"";position:fixed;
 .site:not(.page-home) .journal article{background:linear-gradient(145deg,rgba(15,30,53,.94),rgba(18,21,53,.86));border:1px solid rgba(177,216,255,.1);box-shadow:0 28px 65px rgba(0,0,0,.24)}
 .site:not(.page-home) .footer{color:#eef4ff;background:radial-gradient(circle at 82% 0%,rgba(var(--route-a),.08),transparent 28%),linear-gradient(145deg,#060c17,#0a1324 58%,#0d102b);border-color:rgba(177,215,255,.1);box-shadow:inset 0 1px rgba(255,255,255,.05)}.site:not(.page-home) .footer>div a,.site:not(.page-home) .footer>div button,.site:not(.page-home) .footer>div span{color:#8294aa}.site:not(.page-home) .footer>div a:hover,.site:not(.page-home) .footer>div button:hover{color:rgb(var(--route-a))}.site:not(.page-home) .footer-bottom{border-color:rgba(177,215,255,.1)}
 
-/* Seamless route transitions */
-@view-transition{navigation:auto}
+/* First-load motion only; route changes stay static and immediate */
 html,body{background:#050914}
-.topbar{view-transition-name:northline-navigation}
-.site>main{view-transition-name:northline-page}
 .motion-force.motion-loading .site,.motion-force .site,.motion-force:not(.motion-loading) .site{opacity:1;transform:none}
-.route-arrival .topbar,.route-arrival .topbar>*,.route-arrival .topbar .nav a{animation:none!important}
-::view-transition-group(northline-navigation){z-index:100;animation-duration:.85s;animation-timing-function:cubic-bezier(.16,1,.3,1)}
-::view-transition-old(northline-navigation),::view-transition-new(northline-navigation){animation:none;mix-blend-mode:normal}
-::view-transition-old(northline-page){animation:routePageOut .48s cubic-bezier(.4,0,.2,1) both;mix-blend-mode:normal}
-::view-transition-new(northline-page){animation:routePageIn 1.05s cubic-bezier(.16,1,.3,1) both;mix-blend-mode:normal}
-::view-transition-old(root){animation:routeRootOut .55s ease both}
-::view-transition-new(root){animation:routeRootIn .85s ease both}
-@keyframes routePageOut{to{opacity:0;transform:scale(.992);filter:blur(3px)}}
-@keyframes routePageIn{from{opacity:0;transform:translateY(14px) scale(.995);filter:blur(5px)}to{opacity:1;transform:none;filter:blur(0)}}
-@keyframes routeRootOut{to{background:#050914}}
-@keyframes routeRootIn{from{background:#050914}to{background:#050914}}
+.motion-static .motion-item,.motion-static .motion-item.is-visible{opacity:1!important;transform:none!important;filter:none!important;clip-path:none!important;transition:none!important}
+.motion-static .site *,.motion-static .site *::before,.motion-static .site *::after{animation:none!important}
+.motion-static .topbar,.motion-static .topbar>*,.motion-static .topbar .nav a,.motion-static .hero-eyebrow,.motion-static .hero h1 span,.motion-static .hero-inner>p,.motion-static .hero-actions,.motion-static .proof,.motion-static .hero-console .console-card>*{animation:none!important}

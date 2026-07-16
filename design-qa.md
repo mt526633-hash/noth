@@ -27,8 +27,8 @@
 ## Interaction and runtime checks
 
 - Navigation routes render with the correct active tab and route-specific theme class.
-- Cross-route navigation was verified from Services → Projects → Studio → Journal. The old page eases away into a persistent `#050914` midnight canvas, the new page enters over 1.05 seconds with restrained blur/vertical depth, and the named navigation surface remains visually stable. No white intermediate frame was observed.
-- The previous whole-site `motion-loading` opacity state is neutralized; individual below-fold reveal animations remain active.
+- Cross-route navigation was reverified after removing the expensive cross-document transition. The premium entrance sequence runs on the initial page only. Clicking any internal route activates `motion-static`, makes every reveal target immediately visible, pauses all remaining keyframe animation and uses client-side navigation with no white intermediate frame.
+- The header now lives in the persistent root layout, so it does not unmount or redraw between tabs. Services → Projects → Studio was checked with one header instance, the correct active link, zero hidden motion targets and no console errors.
 - Services entrance and scroll-triggered content reveals were checked in the in-app browser.
 - Browser console errors: none.
 - `npm test`: passed, including production build and all route-render tests.
