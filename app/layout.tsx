@@ -8,4 +8,4 @@ export const metadata: Metadata = {
   twitter: { card: "summary_large_image", title: "Northline — Residential Engineering", description: "Homes engineered to feel effortless." },
 };
 
-export default function RootLayout({children}:Readonly<{children:React.ReactNode}>){return <html lang="en"><body>{children}</body></html>}
+export default function RootLayout({children}:Readonly<{children:React.ReactNode}>){return <html lang="en" className="motion-force motion-loading"><body>{children}</body></html>}
