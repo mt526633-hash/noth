@@ -50,4 +50,10 @@
 - Earlier P1: Services and the other tabs used the old pale pearl background and visibly diverged from the newly approved homepage. Fixed with a shared dark route shell and route-level accent variables.
 - Earlier P2: lower sections still returned to white. Fixed by applying the midnight surface system to archive, service, studio, values, journal and footer regions. Post-fix evidence is in `work/services-midnight-content-final.png`.
 
+## Latest desktop hero verification
+
+- Shared headline anchor: Projects, Services, Studio and Journal now resolve to the same `x=63`, `y=254`, `width=1139` headline geometry at the 1280 x 720 review viewport. Route switching therefore preserves the large-type position while each atmosphere remains distinct.
+- Projects now adds archive metrics and an animated completion rail; Services adds three discipline modules; Studio adds an editorial practice note. Each system begins at `x=63`, `y=520`, remains separate from the right-hand copy at `x=852`, and creates no horizontal overflow.
+- Home and Journal intentionally received no supporting hero modules, matching the requested first/last exclusions.
+
 final result: passed
