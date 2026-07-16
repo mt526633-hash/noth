@@ -33,6 +33,7 @@
 - Services entrance and scroll-triggered content reveals were checked in the in-app browser.
 - Navigation overlap check: the selected capsule remains `72px x 34px`; every inactive-tab hover capsule is consistently `52px x 26px` with a `10px` radius. Adjacent selected/hover states retain `5.3px` to `13px` of clear space, so neighboring shapes never overlap.
 - Homepage navigation check: `Home` is now the first primary tab, receives the same persistent selected capsule as the four subpages and uses its own blue-cyan route tone. The logo targets this same state instead of temporarily hiding the indicator.
+- Homepage hero redesign: the former centered headline and three dashboard cards were replaced by an editorial split layout with a residence-led engineering dossier, integrated project caption, three performance metrics, restrained technical callouts and a simplified collaboration rail. At the 1280 x 720 review viewport the hero is 980px tall, all reveal targets settle visible and the browser console remains clear.
 - Browser console errors: none.
 - `npm test`: passed, including production build and all route-render tests.
 
