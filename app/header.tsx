@@ -19,7 +19,7 @@ export function PersistentHeader(){
     const nav=navRef.current;
     if(!nav)return;
     let frame=0,timer=0;
-    const update=(animate:boolean)=>{const active=nav.querySelector<HTMLAnchorElement>("a.current");if(!active){setIndicator(current=>({...current,visible:false}));return}const left=active.offsetLeft+(active.offsetWidth-34)/2;const previous=lastIndicatorLeft.current;const distance=previous===null?0:Math.abs(left-previous);setIndicator({left,visible:true,stretch:Math.min(2.15,1.3+distance/150)});lastIndicatorLeft.current=left;if(animate&&distance>1){setIndicatorMoving(false);frame=requestAnimationFrame(()=>setIndicatorMoving(true));timer=window.setTimeout(()=>setIndicatorMoving(false),760)}};
+    const update=(animate:boolean)=>{const active=nav.querySelector<HTMLAnchorElement>("a.current");if(!active){setIndicator(current=>({...current,visible:false}));return}const left=active.offsetLeft+(active.offsetWidth-34)/2;const previous=lastIndicatorLeft.current;const distance=previous===null?0:Math.abs(left-previous);setIndicator({left,visible:true,stretch:Math.min(1.38,1.14+distance/620)});lastIndicatorLeft.current=left;if(animate&&distance>1){setIndicatorMoving(false);frame=requestAnimationFrame(()=>setIndicatorMoving(true));timer=window.setTimeout(()=>setIndicatorMoving(false),900)}};
     update(true);
     const resize=()=>update(false);
     window.addEventListener("resize",resize);
