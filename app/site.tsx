@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { ArrowDown, ArrowUpRight, Buildings, Check, Compass, Cube, HouseLine, Leaf, List, Ruler, SealCheck, X } from "@phosphor-icons/react";
+import { ArrowDown, ArrowUpRight, Buildings, Check, Compass, Cube, HouseLine, Leaf, List, Ruler, X } from "@phosphor-icons/react";
 
 type Page = "home" | "projects" | "services" | "studio" | "journal";
 
@@ -13,145 +13,164 @@ const nav: { label: string; href: string; page: Page }[] = [
   { label: "Journal", href: "/journal", page: "journal" },
 ];
 
-const projectData = [
-  { name: "Pine Court House", place: "Cairo · 2025", image: "/images/villa-hero.jpg", tag: "Residential" },
-  { name: "Folded Stone Villa", place: "Amman · 2024", image: "/images/concrete-house.jpg", tag: "Structure" },
-  { name: "Garden Threshold", place: "Alexandria · 2024", image: "/images/garden-house.jpg", tag: "Retrofit" },
-  { name: "The Amber Stair", place: "Dubai · 2023", image: "/images/staircase.jpg", tag: "Interior engineering" },
+const projects = [
+  { name: "Pine Court House", place: "Cairo · 2025", image: "/images/villa-hero.jpg", type: "Residence" },
+  { name: "Folded Stone Villa", place: "Amman · 2024", image: "/images/concrete-house.jpg", type: "Structure" },
+  { name: "Garden Threshold", place: "Alexandria · 2024", image: "/images/garden-house.jpg", type: "Retrofit" },
+  { name: "The Amber Stair", place: "Dubai · 2023", image: "/images/staircase.jpg", type: "Interior" },
+];
+
+const systems = [
+  { id: "structure", label: "Structure", number: "01", title: "Strength without the weight.", text: "We resolve the load path early, using less material while giving the architecture more freedom.", image: "/images/concrete-house.jpg" },
+  { id: "climate", label: "Climate", number: "02", title: "Comfort designed in.", text: "Light, shade, airflow and thermal mass become part of the architecture—not equipment added afterward.", image: "/images/garden-house.jpg" },
+  { id: "detail", label: "Detail", number: "03", title: "Every junction has a reason.", text: "We coordinate the hidden interfaces that make a finished home feel calm, exact and effortless.", image: "/images/staircase.jpg" },
 ];
 
 export function Site({ page }: { page: Page }) {
   const [modal, setModal] = useState(false);
   const [menu, setMenu] = useState(false);
+
   useEffect(() => {
     const esc = (e: KeyboardEvent) => e.key === "Escape" && (setModal(false), setMenu(false));
-    const sections = document.querySelectorAll(".section-pad, .client-strip");
-    const observer = new IntersectionObserver(entries => entries.forEach(entry => {
-      if (entry.isIntersecting) entry.target.classList.add("is-visible");
-    }), { threshold: 0.08 });
-    sections.forEach(section => observer.observe(section));
-    window.addEventListener("keydown", esc); return () => { window.removeEventListener("keydown", esc); observer.disconnect(); };
-  }, []);
+    const reveal = new IntersectionObserver(entries => entries.forEach(entry => {
+      if (entry.isIntersecting) entry.target.classList.add("in-view");
+    }), { threshold: 0.12, rootMargin: "0px 0px -5%" });
+    const items = document.querySelectorAll("[data-reveal]");
+    items.forEach(item => reveal.observe(item));
+    let frame = 0;
+    const onScroll = () => {
+      if (frame) return;
+      frame = requestAnimationFrame(() => {
+        document.querySelectorAll<HTMLElement>("[data-parallax]").forEach(el => {
+          const rect = el.getBoundingClientRect();
+          const offset = (rect.top + rect.height / 2 - innerHeight / 2) * -0.035;
+          el.style.setProperty("--parallax", `${offset}px`);
+        });
+        frame = 0;
+      });
+    };
+    window.addEventListener("keydown", esc);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+    return () => { window.removeEventListener("keydown", esc); window.removeEventListener("scroll", onScroll); reveal.disconnect(); if (frame) cancelAnimationFrame(frame); };
+  }, [page]);
 
   return <div className="site-shell">
     <header className="nav-wrap">
-      <Link href="/" className="brand" aria-label="Northline home"><span className="brand-mark"><i /><i /></span><span>NORTHLINE<small>HOUSE ENGINEERING</small></span></Link>
-      <nav className={menu ? "nav-links open" : "nav-links"}>
-        {nav.map(item => <Link key={item.page} href={item.href} className={page === item.page ? "active" : ""}>{item.label}</Link>)}
-      </nav>
+      <Link href="/" className="brand" aria-label="Northline home"><span>NORTHLINE</span><small>HOUSE ENGINEERING</small></Link>
+      <nav className={menu ? "nav-links open" : "nav-links"}>{nav.map(item => <Link key={item.page} href={item.href} className={page === item.page ? "active" : ""}>{item.label}</Link>)}</nav>
       <button className="nav-cta" onClick={() => setModal(true)}>Start a project</button>
       <button className="menu-button" aria-label="Toggle navigation" onClick={() => setMenu(!menu)}>{menu ? <X /> : <List />}</button>
     </header>
-
-    {page === "home" && <HomeContent showModal={() => setModal(true)} />}
+    {page === "home" && <Home showModal={() => setModal(true)} />}
     {page === "projects" && <ProjectsPage showModal={() => setModal(true)} />}
     {page === "services" && <ServicesPage showModal={() => setModal(true)} />}
     {page === "studio" && <StudioPage showModal={() => setModal(true)} />}
     {page === "journal" && <JournalPage />}
-
     <Footer showModal={() => setModal(true)} />
     {modal && <NoticeModal close={() => setModal(false)} />}
   </div>;
 }
 
-function HomeContent({ showModal }: { showModal: () => void }) {
+function Home({ showModal }: { showModal: () => void }) {
+  const [active, setActive] = useState(0);
+  const system = systems[active];
+  const moveHero = (e: React.PointerEvent<HTMLElement>) => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const r = e.currentTarget.getBoundingClientRect();
+    const x = ((e.clientX - r.left) / r.width - .5) * 10;
+    const y = ((e.clientY - r.top) / r.height - .5) * 7;
+    const asset = e.currentTarget.querySelector<HTMLElement>(".blueprint-asset");
+    if (asset) asset.style.transform = `translate3d(${x}px,${y}px,0) scale(1.025)`;
+  };
+  const resetHero = (e: React.PointerEvent<HTMLElement>) => { const asset = e.currentTarget.querySelector<HTMLElement>(".blueprint-asset"); if (asset) asset.style.transform = ""; };
+
   return <main>
-    <section className="hero section-frame reveal">
+    <section className="luminous-hero" onPointerMove={moveHero} onPointerLeave={resetHero}>
       <div className="hero-copy">
-        <div className="eyebrow"><SealCheck weight="fill" /> Residential engineering, resolved</div>
-        <h1>Homes that<br />stand <em>beautifully.</em></h1>
-        <p>We engineer calm, resilient homes where ambitious architecture and everyday life meet without compromise.</p>
-        <div className="hero-actions"><Link href="/projects" className="button dark">Explore our work</Link><button className="text-button" onClick={showModal}>Discuss your home</button></div>
-        <div className="hero-proof"><div className="avatar-stack"><span>AK</span><span>MA</span><span>JL</span></div><div><strong>4.9 / 5</strong><small>from 48 private clients</small></div></div>
+        <p className="hero-kicker"><span>NL / 01</span> Residential engineering for considered living</p>
+        <h1 aria-label="Homes, resolved to the last line."><span className="headline-line"><em>Homes,</em> resolved</span><span className="headline-line">to the last line.</span></h1>
+        <Link href="/projects" className="line-link">Explore the work <ArrowUpRight /></Link>
       </div>
-      <div className="hero-visual">
-        <img src="/images/villa-hero.jpg" alt="Modern concrete residence integrated into its landscape" />
-        <div className="float-card load-card"><span>STRUCTURAL LOAD</span><strong>−18%</strong><small>material intensity</small></div>
-        <div className="float-card thermal-card"><span><Leaf weight="fill" /> PERFORMANCE</span><strong>A+</strong><small>projected energy grade</small></div>
-        <div className="image-caption"><span>01</span><p>Pine Court House<br /><small>Cairo · Completed 2025</small></p><Link href="/projects"><ArrowUpRight /></Link></div>
+      <div className="blueprint-stage">
+        <img className="blueprint-asset" src="/images/blueprint-house.jpg" alt="Architectural blueprint transforming into a completed concrete residence" />
+        <div className="scan-line" aria-hidden="true" />
+        <div className="figure-label"><span>FIG 01</span><span>Structure becomes space</span></div>
       </div>
-      <a href="#work" className="scroll-cue"><ArrowDown /> Scroll to discover</a>
+      <a className="hero-scroll" href="#principles"><ArrowDown /> Scroll</a>
     </section>
 
-    <section className="client-strip"><span>Trusted by homeowners and partners across</span><div><b>ATELIER / 11</b><b>FORMHAUS</b><b>MONOLITH</b><b>STUDIO YARD</b><b>NEST / CO.</b></div></section>
+    <section className="principles" id="principles" data-reveal>{[
+      ["01", "Structure", "Right-sized systems for clarity, strength and long-term performance."],
+      ["02", "Climate", "Passive-first strategies for comfort, resilience and reduced energy."],
+      ["03", "Detail", "Carefully resolved junctions that endure and age with grace."],
+    ].map(p => <article key={p[0]}><span>{p[0]}</span><h3>{p[1]}</h3><p>{p[2]}</p></article>)}</section>
 
-    <section className="intro section-pad" id="work">
-      <p className="section-index">01 — THE PRACTICE</p>
-      <div className="intro-heading"><h2>Precision you can <em>feel,</em><br />not just calculate.</h2><p>Northline is a residential engineering studio for people who care how a home performs and how it feels. We translate architectural intent into clear, buildable systems.</p></div>
-      <div className="metrics"><div><strong>72</strong><span>homes delivered</span></div><div><strong>11</strong><span>years in practice</span></div><div><strong>6</strong><span>climate zones</span></div><div><strong>0.8%</strong><span>average variation</span></div></div>
+    <section className="manifesto section-pad" data-reveal>
+      <p className="section-label">A practice of precision</p>
+      <h2>Engineering should not be visible.<br />Its <em>clarity</em> should be felt.</h2>
+      <div className="manifesto-meta"><p>Northline brings structure, climate and detail into one continuous thought—so ambitious homes feel simple, quiet and inevitable.</p><div><strong>72</strong><span>completed homes</span></div><div><strong>11</strong><span>years in practice</span></div></div>
     </section>
 
-    <section className="featured section-pad">
-      <div className="section-head"><div><p className="section-index">02 — SELECTED WORK</p><h2>Built with reason.<br /><em>Remembered</em> for feeling.</h2></div><Link href="/projects" className="round-link">View all projects</Link></div>
-      <div className="project-grid">{projectData.slice(0,3).map((p,i) => <ProjectCard key={p.name} p={p} i={i} />)}</div>
+    <section className="selected section-pad">
+      <div className="section-title" data-reveal><div><p className="section-label">Selected work / 2023—2026</p><h2>Built from first principles.</h2></div><Link href="/projects" className="line-link">View archive <ArrowUpRight /></Link></div>
+      <div className="project-stack">{projects.slice(0,3).map((p,i) => <ProjectCard key={p.name} project={p} index={i} />)}</div>
     </section>
 
-    <section className="method section-pad">
-      <div className="method-art"><img src="/images/staircase.jpg" alt="Sculptural interior stair with warm natural light" /><div className="orbit-badge"><Ruler /><span>DETAIL<br />MATTERS</span></div></div>
-      <div className="method-copy"><p className="section-index">03 — OUR METHOD</p><h2>One clear line from <em>idea</em> to handover.</h2><p>We stay involved through every meaningful decision, resolving risk early and protecting the architectural idea all the way to site.</p>{[
-        ["01", "Listen & map", "Site, lifestyle, budget and ambition become one practical brief."],
-        ["02", "Model & resolve", "Structure, thermal behavior and building systems are coordinated in detail."],
-        ["03", "Deliver & verify", "Clear packages, site reviews and a measured handover close the loop."],
-      ].map(x => <div className="method-row" key={x[0]}><span>{x[0]}</span><div><h3>{x[1]}</h3><p>{x[2]}</p></div><ArrowUpRight /></div>)}</div>
+    <section className="systems section-pad" data-reveal>
+      <div className="systems-head"><p className="section-label">One coordinated system</p><h2>Three disciplines.<br />A single line of thought.</h2></div>
+      <div className="systems-tabs" role="tablist" aria-label="Engineering disciplines">{systems.map((s,i) => <button key={s.id} role="tab" aria-selected={active === i} onClick={() => setActive(i)}><span>{s.number}</span>{s.label}</button>)}</div>
+      <div className="system-panel" key={system.id}><div className="system-copy"><span>{system.number} / 03</span><h3>{system.title}</h3><p>{system.text}</p><Link className="line-link" href="/services">Explore this discipline <ArrowUpRight /></Link></div><div className="system-image"><img src={system.image} alt={system.title} /></div></div>
     </section>
 
-    <section className="testimonial section-pad"><p>“Northline found the invisible logic of our home. Every decision became simpler, and the finished spaces feel completely effortless.”</p><div><span>LY</span><strong>Lina Youssef<small>Homeowner, Pine Court</small></strong></div></section>
+    <section className="process section-pad">
+      <div className="process-intro" data-reveal><p className="section-label">From first line to final handover</p><h2>Continuity creates quality.</h2></div>
+      <div className="process-list">{[
+        ["01", "Read the place", "Climate, ground, constraints and the rituals of daily life."],
+        ["02", "Resolve the system", "Structure, envelope and services modelled as one."],
+        ["03", "Make it buildable", "Precise information, coordinated before it reaches site."],
+        ["04", "Stay with the work", "Focused reviews through construction and handover."],
+      ].map(x => <article data-reveal key={x[0]}><span>{x[0]}</span><h3>{x[1]}</h3><p>{x[2]}</p><ArrowUpRight /></article>)}</div>
+    </section>
+
+    <section className="quote section-pad" data-reveal><p>“Every difficult decision became clear. The engineering disappeared into a home that simply feels right.”</p><div><span>LY</span><strong>Lina Youssef<small>Homeowner · Pine Court</small></strong></div></section>
     <CTA showModal={showModal} />
   </main>;
 }
 
 function ProjectsPage({ showModal }: { showModal: () => void }) {
-  return <main><PageHero index="01" title={<>Selected homes,<br /><em>engineered to last.</em></>} copy="A collection of residences where material restraint, structural clarity and daily comfort work as one." />
-    <section className="filters section-pad"><button className="active">All work <span>12</span></button><button>New homes <span>07</span></button><button>Retrofits <span>03</span></button><button>Interiors <span>02</span></button></section>
-    <section className="project-archive section-pad">{projectData.map((p,i) => <ProjectCard key={p.name} p={p} i={i} />)}</section>
-    <section className="archive-note section-pad"><span>2016—2026</span><h2>Every project begins<br />with the <em>right questions.</em></h2><button className="button dark" onClick={showModal}>Tell us about yours</button></section><CTA showModal={showModal} /></main>;
+  return <main><PageHero index="01" title={<>Residences shaped<br />by <em>clear systems.</em></>} copy="New homes, careful retrofits and exact interiors across six climate zones." />
+    <section className="archive-filters section-pad" data-reveal><button className="active">All / 12</button><button>New homes / 07</button><button>Retrofits / 03</button><button>Interiors / 02</button></section>
+    <section className="archive-grid section-pad">{projects.map((p,i) => <ProjectCard key={p.name} project={p} index={i} />)}</section><CTA showModal={showModal} /></main>;
 }
 
 function ServicesPage({ showModal }: { showModal: () => void }) {
-  const services = [
-    { n:"01", icon:<Cube />, title:"Structural design", text:"Elegant structural systems for new houses, extensions and sensitive retrofits—from first sketch through construction issue." },
-    { n:"02", icon:<Leaf />, title:"Building performance", text:"Thermal, daylight and energy modelling that turns comfort and efficiency into measurable design decisions." },
-    { n:"03", icon:<Buildings />, title:"Technical coordination", text:"One coordinated model connecting structure, envelope, services and architectural details before they reach site." },
-    { n:"04", icon:<Compass />, title:"Site stewardship", text:"Tender support, inspections and focused problem-solving that protect design intent during construction." },
-  ];
-  return <main><PageHero index="02" title={<>Engineering the<br /><em>whole house.</em></>} copy="Clear thinking across structure, comfort, coordination and delivery—brought together by one senior team." />
-    <section className="services-list section-pad">{services.map(s => <article key={s.n}><span>{s.n}</span><div className="service-icon">{s.icon}</div><h2>{s.title}</h2><p>{s.text}</p><button onClick={showModal}>Scope this service <ArrowUpRight /></button></article>)}</section>
-    <section className="deliverables section-pad"><div><p className="section-index">WHAT YOU RECEIVE</p><h2>Useful detail.<br /><em>No theatre.</em></h2></div><div className="check-grid">{["Feasibility note","Structural calculations","Coordinated 3D model","Performance report","Tender drawings","Site review record","Handover schedule","12-month check-in"].map(x=><span key={x}><Check weight="bold" />{x}</span>)}</div></section><CTA showModal={showModal} /></main>;
+  const services = [[<Cube key="a" />,"Structural design","Concept-to-construction structural systems for new homes, extensions and sensitive alterations."],[<Leaf key="b" />,"Building performance","Passive design, daylight, thermal and energy modelling for measurable comfort."],[<Buildings key="c" />,"Technical coordination","One detailed model connecting structure, envelope, services and architecture."],[<Compass key="d" />,"Site stewardship","Tender support, site reviews and clear decisions that protect the design intent."]];
+  return <main><PageHero index="02" title={<>The whole house,<br /><em>resolved together.</em></>} copy="Senior engineering attention from the first feasibility question to the final site review." />
+    <section className="service-rows section-pad">{services.map((s,i)=><article data-reveal key={s[1] as string}><span>0{i+1}</span><div>{s[0]}</div><h2>{s[1]}</h2><p>{s[2]}</p><button onClick={showModal}>Discuss scope</button></article>)}</section>
+    <section className="deliverables section-pad" data-reveal><div><p className="section-label">What you receive</p><h2>Useful detail.<br />No theatre.</h2></div><div>{["Feasibility note","Structural calculations","Coordinated 3D model","Performance report","Tender drawings","Site review record","Handover schedule","12-month check-in"].map(x=><span key={x}><Check />{x}</span>)}</div></section><CTA showModal={showModal} /></main>;
 }
 
 function StudioPage({ showModal }: { showModal: () => void }) {
-  return <main><PageHero index="03" title={<>Small studio.<br /><em>Serious attention.</em></>} copy="We are engineers, makers and careful listeners. Every home is led by a director and shaped in direct conversation with its owners." />
-    <section className="studio-story section-pad"><div className="story-image"><img src="/images/staircase.jpg" alt="Warm sculptural architectural interior" /><span>CAIRO / AMMAN / DUBAI</span></div><div><p className="section-index">WHY NORTHLINE</p><h2>Technical rigor,<br />with a <em>human pulse.</em></h2><p>Northline began with a simple frustration: residential engineering was too often treated as a late-stage calculation. We built a studio that joins the conversation early—when the best decisions are still possible.</p><p>Today our team works across disciplines and borders, but stays intentionally small. That means fewer handoffs, clearer answers and genuine accountability.</p><button className="button dark" onClick={showModal}>Work with the studio</button></div></section>
-    <section className="values section-pad"><p className="section-index">OUR PRINCIPLES</p><div>{[["01","Clarity over complexity"],["02","Measure what matters"],["03","Design with the climate"],["04","Stay until it works"]].map(v=><article key={v[0]}><span>{v[0]}</span><h3>{v[1]}</h3></article>)}</div></section><CTA showModal={showModal} /></main>;
+  return <main><PageHero index="03" title={<>Small studio.<br /><em>Serious attention.</em></>} copy="Engineers, makers and careful listeners working directly with homeowners and architects." />
+    <section className="studio-story section-pad" data-reveal><div className="studio-image" data-parallax><img src="/images/staircase.jpg" alt="Warm sculptural stair in a considered interior" /></div><div><p className="section-label">Why Northline</p><h2>Technical rigor,<br />with a human pulse.</h2><p>Northline began with a simple frustration: residential engineering was too often treated as a late-stage calculation. We built a studio that joins the conversation while the best decisions are still possible.</p><p>Our team stays intentionally small. That means fewer handoffs, clearer answers and genuine accountability.</p><button className="primary-action" onClick={showModal}>Work with the studio</button></div></section>
+    <section className="values section-pad">{["Clarity over complexity","Measure what matters","Design with the climate","Stay until it works"].map((v,i)=><article data-reveal key={v}><span>0{i+1}</span><h3>{v}</h3></article>)}</section><CTA showModal={showModal} /></main>;
 }
 
 function JournalPage() {
-  const posts = [
-    ["Field note 08", "Why the quietest detail is often structural", "6 min read", "/images/concrete-house.jpg"],
-    ["Material study", "Concrete without the coldness", "4 min read", "/images/staircase.jpg"],
-    ["Guide", "Before you buy a difficult plot", "8 min read", "/images/garden-house.jpg"],
-    ["Field note 07", "The case for modelling daylight early", "5 min read", "/images/villa-hero.jpg"],
-  ];
-  return <main><PageHero index="04" title={<>Notes on making<br /><em>better homes.</em></>} copy="Field observations, practical guides and the technical ideas shaping our residential work." />
-    <section className="journal-grid section-pad">{posts.map((p,i)=><article key={p[1]}><div className="journal-image"><img src={p[3]} alt="Architectural study" /><span>{String(i+1).padStart(2,"0")}</span></div><p>{p[0]}</p><h2>{p[1]}</h2><div><span>{p[2]}</span><ArrowUpRight /></div></article>)}</section></main>;
+  const posts = [["Field note 08","Why the quietest detail is often structural","6 min","/images/concrete-house.jpg"],["Material study","Concrete without the coldness","4 min","/images/staircase.jpg"],["Guide","Before you buy a difficult plot","8 min","/images/garden-house.jpg"],["Field note 07","The case for modelling daylight early","5 min","/images/villa-hero.jpg"]];
+  return <main><PageHero index="04" title={<>Notes on making<br /><em>better homes.</em></>} copy="Field observations, practical guides and the ideas shaping our residential work." />
+    <section className="journal-grid section-pad">{posts.map((p,i)=><article data-reveal key={p[1]}><div><img src={p[3]} alt="Architectural study" /><span>0{i+1}</span></div><p>{p[0]}</p><h2>{p[1]}</h2><footer><span>{p[2]}</span><ArrowUpRight /></footer></article>)}</section></main>;
 }
 
-function PageHero({ index, title, copy }: { index:string; title:React.ReactNode; copy:string }) {
-  return <section className="page-hero section-pad"><p className="section-index">{index} — NORTHLINE</p><h1>{title}</h1><p>{copy}</p></section>;
+function PageHero({ index, title, copy }: { index:string; title:React.ReactNode; copy:string }) { return <section className="page-hero"><p>{index} / NORTHLINE</p><h1>{title}</h1><span>{copy}</span></section>; }
+
+function ProjectCard({ project, index }: { project: typeof projects[number]; index:number }) {
+  return <article className="project-card" data-reveal><Link href="/projects" className="project-visual"><img data-parallax src={project.image} alt={project.name} /><span>Open project <ArrowUpRight /></span></Link><div><span>0{index+1}</span><h3>{project.name}</h3><p>{project.type} · {project.place}</p></div></article>;
 }
 
-function ProjectCard({ p, i }: { p: typeof projectData[number]; i:number }) {
-  return <article className={`project-card project-${i+1}`}><div className="project-image"><img src={p.image} alt={p.name} /><span>{p.tag}</span><Link href="/projects" aria-label={`View ${p.name}`}><ArrowUpRight /></Link></div><div><span>{String(i+1).padStart(2,"0")}</span><h3>{p.name}</h3><p>{p.place}</p></div></article>;
-}
+function CTA({ showModal }: { showModal: () => void }) { return <section className="cta section-pad" data-reveal><p>Have a home in mind?</p><h2>Begin with a clear line.</h2><button className="primary-action light" onClick={showModal}>Start a conversation</button><small>Portfolio concept · no information is collected</small></section>; }
 
-function CTA({ showModal }: { showModal: () => void }) {
-  return <section className="cta section-pad"><div className="cta-badge"><HouseLine weight="fill" /></div><p>HAVE A HOME IN MIND?</p><h2>Let’s make it<br /><em>make sense.</em></h2><button className="button light" onClick={showModal}>Start a conversation</button><small>Typically replying within two working days</small></section>;
-}
+function Footer({ showModal }: { showModal: () => void }) { return <footer className="site-footer"><div><strong>NORTHLINE</strong><span>HOUSE ENGINEERING</span></div><div>{nav.map(n=><Link key={n.page} href={n.href}>{n.label}</Link>)}</div><div><span>Cairo · Amman · Dubai</span><button onClick={showModal}>hello@northline.house</button></div><div className="footer-end"><span>© 2026 Northline</span><span>Fictional portfolio experience</span><button onClick={()=>scrollTo({top:0,behavior:"smooth"})}>Back to top</button></div></footer>; }
 
-function Footer({ showModal }: { showModal: () => void }) {
-  return <footer><div className="footer-brand"><span className="brand-mark light"><i /><i /></span><h2>NORTHLINE</h2><p>Residential engineering<br />for considered living.</p></div><div><h4>Explore</h4>{nav.map(n=><Link key={n.page} href={n.href}>{n.label}</Link>)}</div><div><h4>Visit</h4><span>14 Al Maadi Street</span><span>Cairo, Egypt</span><button onClick={showModal}>hello@northline.house</button></div><div><h4>Follow</h4><a href="#">Instagram</a><a href="#">LinkedIn</a><a href="#">Are.na</a></div><div className="footer-bottom"><span>© 2026 Northline House Engineering</span><span>Portfolio concept — not accepting enquiries</span><button onClick={()=>window.scrollTo({top:0,behavior:"smooth"})}>Back to top ↑</button></div></footer>;
-}
-
-function NoticeModal({ close }: { close: () => void }) {
-  return <div className="modal-backdrop" role="presentation" onMouseDown={close}><div className="modal" role="dialog" aria-modal="true" aria-labelledby="notice-title" onMouseDown={e=>e.stopPropagation()}><button className="modal-close" onClick={close} aria-label="Close dialog"><X /></button><span className="modal-icon"><HouseLine weight="fill" /></span><p>PORTFOLIO DEMONSTRATION</p><h2 id="notice-title">This experience is intentionally enquiry-free.</h2><p className="modal-copy">Northline is a fictional studio created to demonstrate digital design and front-end craft. Contact, booking and account features are disabled, so no personal information is collected or submitted.</p><button className="button dark" onClick={close}>Continue exploring</button><small>No data has been saved.</small></div></div>;
-}
+function NoticeModal({ close }: { close: () => void }) { return <div className="modal-backdrop" onMouseDown={close}><div className="modal" role="dialog" aria-modal="true" aria-labelledby="notice-title" onMouseDown={e=>e.stopPropagation()}><button className="modal-close" onClick={close} aria-label="Close dialog"><X /></button><HouseLine className="modal-icon" /><p>PORTFOLIO DEMONSTRATION</p><h2 id="notice-title">This experience is intentionally enquiry-free.</h2><p>Northline is a fictional studio created to demonstrate digital design and front-end craft. Contact and booking actions are disabled, so no personal information is collected.</p><button className="primary-action" onClick={close}>Continue exploring</button><small>No data has been saved.</small></div></div>; }
