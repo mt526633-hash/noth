@@ -14,4 +14,6 @@
 
 Photography remains static on hover. Every major section, heading, paragraph, card, control group, metric, list and footer element participates in a staggered appearance sequence. A server-rendered hidden state plus double-frame initialization guarantees that disappearance is painted before each reveal begins. Viewport-ratio gates prevent below-fold motion from firing early without leaving empty regions: hero cards require 45% visibility, large surfaces 28%, and text or controls 16%. Text clipping is completely disabled. Linear-inspired motion uses shorter travel, 1–4px blur, restrained scale and a smooth `cubic-bezier(.16,1,.3,1)` easing. Distinct variants remain for headings, copy, buttons, tabs, stats, projects, process cards, accordions, charts and card content. Motion is explicitly forced for this portfolio demo, matching the user's request even when the operating system asks sites to reduce animation.
 
+The background system has been visually reverified at 1440 × 1000 in `work/luxury-background-final.png`. A moving pearl atmosphere, architectural grid, cyan/violet reflected light, glass section transitions, deep illuminated metric bands and section-specific tonal fields create a consistent luxury canvas without introducing an outer frame or reducing text contrast.
+
 final result: passed
