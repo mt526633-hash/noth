@@ -21,7 +21,16 @@ const services=[
 
 export function Site({page}:{page:Page}){
   const [menu,setMenu]=useState(false),[notice,setNotice]=useState(false);
-  useEffect(()=>{const observer=new IntersectionObserver(entries=>entries.forEach(entry=>entry.isIntersecting&&entry.target.classList.add("is-visible")),{threshold:.12,rootMargin:"0px 0px -5%"});const nodes=document.querySelectorAll("[data-reveal]");nodes.forEach(node=>observer.observe(node));const close=(e:KeyboardEvent)=>e.key==="Escape"&&(setMenu(false),setNotice(false));window.addEventListener("keydown",close);return()=>{observer.disconnect();window.removeEventListener("keydown",close)}},[page]);
+  useEffect(()=>{
+    const selector=["[data-reveal]",".hero-console > *",".client-strip > *",".intro > *",".section-heading > *",".service-tabs > *",".service-panel-copy > *",".metric-stage > *",".featured-caption > *",".project-mini-grid > *",".numbers > *",".estimator > *",".estimator-card > *",".process-grid > *",".faq > *",".faq-list > *",".subhero > *",".archive-grid > *",".services-page > *",".studio-story > *",".studio-story article > *",".values > *",".journal > *",".callout > *",".footer > *"].join(",");
+    const counters=new Map<Element,number>();
+    const nodes=Array.from(document.querySelectorAll<HTMLElement>(selector)).filter(node=>!node.classList.contains("ambient")&&!node.classList.contains("metric-glow")&&!node.classList.contains("callout-glow"));
+    nodes.forEach(node=>{const parent=node.parentElement;if(!parent)return;const index=counters.get(parent)??0;counters.set(parent,index+1);node.classList.add("motion-item");if(node.matches("h1,h2,h3,.section-heading"))node.classList.add("motion-mask");if(node.matches(".project-tile,.featured-project,.metric-stage,.studio-story>div,.journal article"))node.classList.add("motion-scale");node.style.setProperty("--motion-delay",`${Math.min(index*85,425)}ms`)});
+    const observer=new IntersectionObserver(entries=>entries.forEach(entry=>{if(entry.isIntersecting){entry.target.classList.add("is-visible");observer.unobserve(entry.target)}}),{threshold:.1,rootMargin:"0px 0px -7%"});
+    nodes.forEach(node=>observer.observe(node));
+    const close=(e:KeyboardEvent)=>e.key==="Escape"&&(setMenu(false),setNotice(false));window.addEventListener("keydown",close);
+    return()=>{observer.disconnect();window.removeEventListener("keydown",close)}
+  },[page]);
   return <div className="site"><header className="topbar"><Link className="logo" href="/"><span className="logo-mark"><House weight="fill"/></span><span>Northline<small>House engineering</small></span></Link><nav className={menu?"nav open":"nav"}>{navigation.map(item=><Link key={item.page} className={page===item.page?"current":""} href={item.href} onClick={()=>setMenu(false)}>{item.label}</Link>)}</nav><button className="button button-dark nav-button" onClick={()=>setNotice(true)}><span>Start a project</span><ArrowRight/></button><button className="menu" onClick={()=>setMenu(!menu)} aria-label="Toggle navigation">{menu?<X/>:<List/>}</button></header>
   {page==="home"&&<Home openNotice={()=>setNotice(true)}/>} {page==="projects"&&<Projects openNotice={()=>setNotice(true)}/>} {page==="services"&&<Services openNotice={()=>setNotice(true)}/>} {page==="studio"&&<Studio openNotice={()=>setNotice(true)}/>} {page==="journal"&&<Journal/>}<Footer openNotice={()=>setNotice(true)}/>{notice&&<Notice close={()=>setNotice(false)}/>}</div>
 }
