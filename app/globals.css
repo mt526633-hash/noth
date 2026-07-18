@@ -1104,6 +1104,7 @@ to{opacity:0}
                 inset 0 1px rgba(255, 255, 255, 0.12);
   }
 }
+
 .site.page-journal .callout-journal-index,
 .motion-static .site.page-journal .callout-journal-index{
   z-index:0;
@@ -2660,5 +2661,73 @@ html.device-mobile .topbar{display:none!important}
     backface-visibility:visible!important;
     will-change:auto!important;
     shape-rendering:geometricPrecision;
+  }
+}
+
+/* Stable reveal authority: one composited path for every desktop route.
+   Kept last so legacy route experiments cannot reintroduce blur, clipping,
+   long blank states or conflicting transition timings. */
+@media(min-width:901px){
+  html.motion-force body .site.motion-surface[class*="page-"] .motion-item,
+  html.motion-force body .site.motion-surface[class*="page-"] .motion-item:not(.is-visible){
+    opacity:0!important;
+    transform:translate3d(0,12px,0)!important;
+    filter:none!important;
+    clip-path:none!important;
+    backface-visibility:hidden!important;
+    will-change:opacity,transform!important;
+    transition-property:opacity,transform!important;
+    transition-duration:.46s,.58s!important;
+    transition-timing-function:cubic-bezier(.22,1,.36,1),cubic-bezier(.16,1,.3,1)!important;
+    transition-delay:var(--motion-delay,0ms)!important;
+  }
+  html.motion-force body .site.motion-surface[class*="page-"] .motion-item.motion-left{transform:translate3d(-14px,6px,0)!important}
+  html.motion-force body .site.motion-surface[class*="page-"] .motion-item.motion-right{transform:translate3d(14px,6px,0)!important}
+  html.motion-force body .site.motion-surface[class*="page-"] .motion-item.motion-sweep{transform:translate3d(-10px,0,0)!important}
+  html.motion-force body .site.motion-surface[class*="page-"] .motion-item.motion-scale,
+  html.motion-force body .site.motion-surface[class*="page-"] .motion-item.motion-zoom,
+  html.motion-force body .site.motion-surface[class*="page-"] img.motion-item{transform:translate3d(0,0,0)!important}
+  html.motion-force body .site.motion-surface[class*="page-"] .motion-item.is-visible,
+  html.motion-force body .site.motion-surface[class*="page-"] .hero h1.motion-hero-title.is-visible,
+  html.motion-force body .site.motion-surface[class*="page-"] .subhero h1.motion-hero-title.is-visible{
+    opacity:1!important;
+    transform:translate3d(0,0,0)!important;
+    filter:none!important;
+    clip-path:none!important;
+    will-change:auto!important;
+  }
+  html.motion-force body .site.motion-surface[class*="page-"] .hero h1.motion-hero-title,
+  html.motion-force body .site.motion-surface[class*="page-"] .subhero h1.motion-hero-title{
+    transform:none!important;
+    transition:opacity .52s cubic-bezier(.22,1,.36,1) var(--motion-delay,0ms)!important;
+  }
+  html.motion-force body .site.motion-surface.motion-preparing[class*="page-"] .motion-item{
+    transition:none!important;
+  }
+}
+
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto!important}
+  html.motion-reduced body .site.motion-surface .motion-item,
+  html.motion-reduced body .site.motion-surface .motion-item:not(.is-visible),
+  html.motion-reduced body .site.motion-surface .motion-item.is-visible{
+    opacity:1!important;
+    transform:none!important;
+    filter:none!important;
+    clip-path:none!important;
+    transition:none!important;
+    animation:none!important;
+    will-change:auto!important;
+  }
+  html.motion-reduced body .topbar,
+  html.motion-reduced body .site .ambient,
+  html.motion-reduced body .site .subhero::before,
+  html.motion-reduced body .site .subhero::after,
+  html.motion-reduced body .site [class*="glow"],
+  html.motion-reduced body .site [class*="status"],
+  html.motion-reduced body .site [class*="index"]::before,
+  html.motion-reduced body .site [class*="index"]::after{
+    animation:none!important;
+    transition:none!important;
   }
 }

@@ -41,3 +41,4 @@ next-env.d.ts
 /outputs/
 /work/
 .codex-dev-server*.log
+.audit-server*.log
