@@ -1,49 +1,42 @@
-# Northline Projects hero redesign QA
+# Northline Projects hero viewport-fit QA
 
 ## Evidence
 
-- Source visual truth: `C:/Users/pc/AppData/Local/Temp/codex-clipboard-f2a9e079-0cae-4448-b29e-e984c23c9377.png`, the dashboard-style Projects hero the user asked to redesign; `C:/Users/pc/AppData/Local/Temp/codex-clipboard-eca942ab-0302-4ff3-8e23-c45e7145c0f5.png`, the circular seal the user asked to remove.
-- Implementation screenshot: `work/projects-hero-redesign.png`.
-- Focused implementation screenshot: `work/projects-showcase-detail.png`.
-- Combined comparison evidence: `work/projects-hero-comparison.png`.
-- Desktop comparison viewport: 1646 × 662. Focused review viewport: 1646 × 900. Mobile review viewport: 390 × 844.
-- State: Projects route loaded with its opening sequence settled; Pine Court House selected. A second interaction check selected Folded Stone Villa.
+- Source visual truth: `C:/Users/pc/AppData/Local/Temp/codex-clipboard-8c9a5570-1e75-4ca3-b999-83385d4f024a.png` and `C:/Users/pc/AppData/Local/Temp/codex-clipboard-b86ad6b1-8e91-4c60-a19c-37efc9a11605.png`, plus the user's explicit requirement that the headline must not overlap the showcase and the circular selectors must be visible without scrolling.
+- Implementation screenshot: `C:/Users/pc/Documents/Codex/2026-07-16/i/outputs/projects-hero-fixed-1648x834.png`.
+- Full-view comparison evidence: `C:/Users/pc/Documents/Codex/2026-07-16/i/outputs/projects-hero-before-after.png`.
+- Focused comparison evidence: `C:/Users/pc/Documents/Codex/2026-07-16/i/outputs/projects-hero-focused-before-after.png`.
+- Viewport: 1648 x 834 requested in the in-app browser. The captured page surface is 1633 x 826 after browser scrollbar/chrome exclusion.
+- State: Projects route at the top of the page with the opening animation settled. Pine Court House is shown in the implementation evidence; Garden Threshold was selected separately to verify interaction behavior.
 
 ## Findings
 
 - P0 blockers: none.
-- P1 dashboard-like composition: resolved. The analytics panel, bar chart, large numerical status, feature strip, archive utility rail and circular N/04 seal are no longer rendered.
-- P1 hierarchy and architectural relevance: resolved. The replacement uses supplied residence photography as the primary visual, paired with an editorial project summary, two concise project facts and a restrained action row.
-- P2 density and empty-space balance: resolved. The showcase spans the same content grid as the title and uses a deliberate 1.08/0.92 image-copy split. The four project selectors form one quiet baseline rather than multiple floating shapes.
-- P2 interaction clarity: resolved. Four semantic project tabs expose selected state, work with mouse, keyboard focus and click, and update the image, project title, place, year, scope and typology.
-- P3 polish: the selected-project underline is intentionally thin and cyan so it remains visible without turning the selector row into another dashboard.
+- P1 headline/showcase collision: resolved. The headline ends at 330px and the showcase begins at 350px, leaving a visible 20px separation.
+- P1 above-the-fold project navigation: resolved. The showcase was reduced from 430px to 300px and moved upward; all four circular selectors now appear in the initial desktop viewport.
+- P2 card density after resizing: resolved. The details panel uses a 288px fixed height with tightened type and spacing, with no clipping or overflow.
+- P2 hierarchy preservation: resolved. The same headline, image-led layout, glass details panel, circular markers, colors, and content remain intact.
 
 ## Required fidelity surfaces
 
-- Fonts and typography: the existing Manrope/Cormorant pairing, shared hero anchor, display wrapping and gradient serif emphasis remain unchanged. Showcase labels use larger, crisp optical sizes with no blur filters.
-- Spacing and layout rhythm: the headline stays in the shared tab position. The showcase starts below it with an 86px breathing interval at the desktop review viewport and introduces no horizontal overflow.
-- Colors and visual tokens: the navy/cyan Projects palette is preserved. The showcase uses two low-contrast navy surfaces, one hairline border and a restrained selected state.
-- Image quality and asset fidelity: existing high-resolution residence assets are reused directly with an architectural crop. Images do not transform on hover; the selected image uses only a short entrance crossfade/scale.
-- Copy and content: project names, places, years, types and scopes come from the existing project data. New editorial summaries are fictional portfolio copy consistent with the brief.
+- Fonts and typography: the existing Manrope/Cormorant pairing, weights, gradient italic treatment, and copy hierarchy are preserved. Display sizing was reduced only enough to create the required separation.
+- Spacing and layout rhythm: the headline/showcase boundary now has a measurable 20px gap. The 300px showcase and 108px selector row fit within the 800px Projects hero.
+- Colors and visual tokens: the existing navy, cyan, blue, glass border, and active-marker treatments are unchanged.
+- Image quality and asset fidelity: the original high-resolution project images and crops remain in use; no placeholder or replacement asset was introduced.
+- Copy and content: all project names, descriptions, locations, dates, scopes, typologies, and actions remain unchanged.
 
 ## Interaction and runtime checks
 
-- Circular seal present: no.
-- Old archive context rail present: no.
-- Featured project tabs: four.
-- Selecting `02 Folded Stone Villa Amman` updates the title to `Folded Stone Villa` and image to `/images/concrete-house.jpg`.
-- Opening sequence: image uses `projectHeroLeft`; title and copy use independent up/right motions; project tabs use staggered up motions. All are compositor-only and use no blur.
-- Horizontal overflow: 0px at 1646px desktop and 390px mobile.
-- Primary actions remain functional: `View residence` targets the archive and `Project brief` opens the portfolio notice.
+- Selected `03 Garden Threshold Alexandria`; `aria-selected` changed to `true` and the featured project content updated.
+- All four circular selectors remain present and readable after interaction.
 - Browser console errors: none.
-- `npm test`: passed, including production build and all route-render tests.
-- `git diff --check`: passed.
+- `npm run build`: passed.
+- `npm run lint`: passed with 0 errors and 8 pre-existing warnings about image optimization and one ARIA usage.
 
 ## Comparison history
 
-- Earlier P1: the hero resembled a software metrics dashboard and visually competed with the architecture. Fixed by replacing the entire console with an image-led editorial showcase.
-- Earlier P1: the floating N/04 seal and archive markers made the composition feel disconnected. Fixed by removing them from the rendered Projects hero.
-- Earlier P2: the lower feature rail introduced too many bordered compartments. Fixed by consolidating project selection into a single four-column strip attached to the image/copy frame.
-- Post-fix visual evidence: `work/projects-hero-comparison.png` and `work/projects-showcase-detail.png`.
+- Earlier P1: the italic headline touched and visually overlaid the image edge. Fixed by moving the headline upward, reducing its desktop scale, and positioning the showcase at 350px.
+- Earlier P1: the 430px showcase pushed the circular selectors below the 834px viewport. Fixed by reducing the showcase to 300px, the details panel to 288px, the marker row to 108px, and the hero to 800px.
+- Post-fix evidence: the full and focused before/after comparisons show the clear headline gap and all four visible markers.
 
 final result: passed
